@@ -4,15 +4,17 @@ import json
 import os
 import string
 from collections import OrderedDict
-from io import TextIOWrapper
 from pathlib import Path
-from shutil import copyfile, move
+from shutil import move
 from typing import TextIO
 from xml.dom import minidom
+from logging import getLogger
 
 from behave.model import Step
 from requests.models import Response
 from urllib.parse import urlparse
+
+log = getLogger(__name__)
 
 
 class EaiBat:
@@ -155,7 +157,7 @@ class EaiBat:
                               f"~~~json\n{response}\n~~~\n\n")
             return
         except Exception as exception:
-            pass
+            log.info(f"Response is not a json.\n Get {exception.args[0]}")
 
         try:
             response = minidom.parseString(event.text).toprettyxml(indent="   ")
@@ -163,7 +165,7 @@ class EaiBat:
                               f"~~~xml\n{response}\n~~~\n\n")
             return
         except Exception as exception:
-            pass
+            log.info(f"Response is not a XML.\n Get {exception.args[0]}")
 
         file_stream.write(f"{section_number} Response content\n"
                           f"{event.text}\n")
