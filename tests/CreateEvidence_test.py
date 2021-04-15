@@ -23,7 +23,7 @@ class TestCreateEvidence:
             response = requests.get("https://mock.com")
             self.my_eai.step = ("Given", "please follow")
             self.my_eai.push_event(response)
-            self.my_eai.create_evidence("TEST1.md", "txt")
+            self.my_eai.create_evidence("TEST1.md", "markdown")
 
             expected = hash_file(os.path.abspath(f"{os.getcwd()}/tests/resources/test_one_json.md"))
             produced = hash_file(f"{self.my_eai.evidence_location}/TEST1.md")
@@ -37,7 +37,7 @@ class TestCreateEvidence:
             response = requests.get("https://mock.com")
             self.my_eai.step = ("When", "last")
             self.my_eai.push_event(response)
-            self.my_eai.create_evidence("TEST2.md", "txt")
+            self.my_eai.create_evidence("TEST2.md", "markdown")
             expected = hash_file(os.path.abspath(
                 f"{os.getcwd()}/tests/resources/test_one_json_one_xml.md"))
             produced = hash_file(f"{self.my_eai.evidence_location}/TEST2.md")
@@ -48,7 +48,7 @@ class TestCreateEvidence:
         self.my_eai.evidence_location = tmp_path
         self.my_eai.step = ("Given", "please follow")
         self.my_eai.push_event("A silly text")
-        self.my_eai.create_evidence("TEST1.md", "txt")
+        self.my_eai.create_evidence("TEST1.md", "markdown")
 
         expected = hash_file(os.path.abspath(f"{os.getcwd()}/tests/resources/test_one_text.md"))
         produced = hash_file(f"{self.my_eai.evidence_location}/TEST1.md")
@@ -59,7 +59,7 @@ class TestCreateEvidence:
         self.my_eai.evidence_location = tmp_path
         self.my_eai.step = ("Given", "please follow")
         self.my_eai.push_event({"element1": "an image", "element2": "ringing bell"})
-        self.my_eai.create_evidence("TEST1.md", "txt")
+        self.my_eai.create_evidence("TEST1.md", "markdown")
 
         expected = hash_file(os.path.abspath(f"{os.getcwd()}/tests/resources/test_one_dictionary.md"))
         produced = hash_file(f"{self.my_eai.evidence_location}/TEST1.md")
@@ -70,5 +70,5 @@ class TestCreateEvidence:
         self.my_eai.clear_history()
         self.my_eai.evidence_location = tmp_path
         self.my_eai.step = ("Given", "please follow")
-        self.my_eai.push_event(("a_text.txt", "txt"))
-        self.my_eai.create_evidence("TEST1.md", "txt")
+        self.my_eai.push_event(("a_text.txt", "markdown"))
+        self.my_eai.create_evidence("TEST1.md", "markdown")
