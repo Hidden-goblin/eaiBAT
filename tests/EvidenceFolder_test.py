@@ -1,5 +1,5 @@
-# Author: eric.aivayan@free.fr
-# Licence: under GPLv3
+# -*- Product under GNU GPL v3 -*-
+# -*- Author: E.Aivayan -*-
 from src.eaiBat import EaiBat
 
 

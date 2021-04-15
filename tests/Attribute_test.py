@@ -1,5 +1,5 @@
-# Author: eric.aivayan@free.fr
-# Licence: under GPLv3
+# -*- Product under GNU GPL v3 -*-
+# -*- Author: E.Aivayan -*-
 import pytest
 import string
 from behave.model import Step
