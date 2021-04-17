@@ -1,8 +1,7 @@
 # -*- Product under GNU GPL v3 -*-
 # -*- Author: E.Aivayan -*-
 import pytest
-from requests.models import Response
-from src.eaiBat import EaiBat
+from eaiBat import EaiBat
 
 
 class TestPushEvent:

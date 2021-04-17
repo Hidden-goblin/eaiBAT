@@ -9,6 +9,7 @@ from behave.model import Step
 from urllib.parse import urlparse
 
 from .evidenceGenerators.MdEvidence import generate_md_evidence
+from .evidenceGenerators.DocxEvidence import generate_docx_evidence
 
 log = getLogger(__name__)
 
@@ -74,6 +75,8 @@ class EaiBat:
         self.__evidence_location = evidence_location
 
     def push_event(self, event):
+        """Tuple is for external file with first element the file path, second the type (img or
+        txt or bin)"""
         if not isinstance(event, Response) \
                 and not isinstance(event, str) \
                 and not isinstance(event, dict) \
@@ -88,5 +91,7 @@ class EaiBat:
     def create_evidence(self, filename: str, evidence_type: str):
         if evidence_type.casefold() == "markdown":
             generate_md_evidence(self.evidence_location, filename, self.history)
+        elif evidence_type.casefold() == "word":
+            generate_docx_evidence(self.evidence_location, filename, self.history)
         else:
             log.warning(f"No generator for {evidence_type}")

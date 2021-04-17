@@ -5,11 +5,11 @@ from shutil import copyfile
 
 import requests
 import requests_mock
-from src.eaiBat import EaiBat
+from eaiBat import EaiBat
 from tests.helpers import hash_file
 
 
-class TestCreateEvidence:
+class TestCreateEvidenceMarkdown:
     def setup_class(self):
         self.my_eai = EaiBat()
 
@@ -61,7 +61,8 @@ class TestCreateEvidence:
         self.my_eai.push_event({"element1": "an image", "element2": "ringing bell"})
         self.my_eai.create_evidence("TEST1.md", "markdown")
 
-        expected = hash_file(os.path.abspath(f"{os.getcwd()}/tests/resources/test_one_dictionary.md"))
+        expected = hash_file(os.path.abspath(
+            f"{os.getcwd()}/tests/resources/test_one_dictionary.md"))
         produced = hash_file(f"{self.my_eai.evidence_location}/TEST1.md")
         assert expected == produced
 

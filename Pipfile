@@ -9,10 +9,12 @@ flake8-html = "*"
 pytest = "*"
 coverage = "*"
 requests-mock = "*"
+freezegun = "*"
 
 [packages]
 behave = "*"
 requests = "*"
+python-docx = "*"
 
 [requires]
 python_version = "3.8"

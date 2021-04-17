@@ -58,7 +58,7 @@ def _response_to_evidence(file_stream: TextIO,
                           event: Response,
                           sub_level: bool = False):
 
-    section_number = "#### " if sub_level else  "### "
+    section_number = "#### " if sub_level else "### "
 
     file_stream.write(f"{section_number}URL\n"
                       f"{event.url}\n"

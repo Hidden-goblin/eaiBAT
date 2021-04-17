@@ -1,7 +1,7 @@
 # -*- Product under GNU GPL v3 -*-
 # -*- Author: E.Aivayan -*-
 # -*- coding: utf-8 -*-
-from setuptools import setup
+from setuptools import setup, find_packages
 
 with open("README.md", "r") as file:
     long_description = file.read()
@@ -12,6 +12,7 @@ setup(
     description="Basic classes to ease BDD evidence creation",
     long_description=long_description,
     long_description_content_type="text/markdown",
+    url="https://github.com/Hidden-goblin/eaiBAT.git",
     classifiers=[  # Optional
         # How mature is this project? Common values are
         #   3 - Alpha
@@ -32,12 +33,13 @@ setup(
     ],
     install_requires=[
         'behave',
-        'requests'
+        'requests',
+        'python-docx'
     ],
     python_requires='>=3.7, !=2.*',
-    # packages=find_packages(),
-    # include_package_data=True,
-    package_dir={'': 'src'},
+    packages=find_packages(where="eaiBat"),
+    include_package_data=True,
+    package_dir={'': 'eaiBat'},
     author="Eric Aïvayan",
     author_email="eric.aivayan@free.fr"
 )

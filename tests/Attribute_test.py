@@ -3,7 +3,7 @@
 import pytest
 import string
 from behave.model import Step
-from src.eaiBat import EaiBat
+from eaiBat import EaiBat
 
 
 class TestAttribute:
