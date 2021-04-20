@@ -42,10 +42,19 @@ class EaiBat:
 
     @property
     def step(self) -> tuple:
+        """
+        The actual key in order to record events in the history
+        :return: tuple
+        """
         return self.__step
 
     @step.setter
     def step(self, step):
+        """
+        Set the history key using two elements either using a Behave's step object
+        or a size 2 tuple of string or int
+        :param step: a tuple or behave's step
+        """
         if not isinstance(step, tuple) and not isinstance(step, Step):
             raise AttributeError("Step is either a behave.model.step or a tuple")
         if isinstance(step, tuple) and len(step) != 2:

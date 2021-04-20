@@ -39,7 +39,13 @@ def generate_docx_evidence(evidence_folder, evidence_filename, history):
 
 
 def _file_to_evidence(docx_document: Document, event: tuple, destination_folder: Path):
-    file_path = Path(f"{destination_folder.parent}/{event[0]}")
+    path_from_event = Path(event[0])
+    # First check the event file element is pointing to a file
+    if not path_from_event.exists() or not path_from_event.is_file():
+        file_path = Path(f"{destination_folder.parent}/{event[0]}")
+    else:
+        file_path = path_from_event
+
     if file_path.exists() and file_path.is_file():
         move(file_path, f"{destination_folder}/{file_path.name}")
         if event[1].casefold() == "img":
