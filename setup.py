@@ -8,7 +8,7 @@ with open("README.md", "r") as file:
 
 setup(
     name="eaibat",
-    version="0.0.3",
+    version="0.0.5",
     description="Basic classes to ease BDD evidence creation",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -37,9 +37,9 @@ setup(
         'python-docx'
     ],
     python_requires='>=3.7, !=2.*',
-    packages=find_packages(where="eaiBat"),
+    packages=find_packages(),
     include_package_data=True,
-    package_dir={'': 'eaiBat'},
+    # package_dir={'': 'eaiBat'},
     author="Eric Aïvayan",
     author_email="eric.aivayan@free.fr"
 )

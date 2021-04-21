@@ -39,7 +39,7 @@ class TestAttribute:
     def test_url_allowed_characters(self):
         with pytest.raises(ValueError) as val_error:
             self.my_eai.url = "http://éa+(£test.com"
-        allowed_characters = set(string.ascii_letters + string.digits + '-.')
+        allowed_characters = set(string.ascii_letters + string.digits + '-.:')
         assert str(val_error.value) == f"Url should not contains characters out " \
                                        f"of {allowed_characters}"
 

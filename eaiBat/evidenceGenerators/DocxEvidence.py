@@ -35,7 +35,8 @@ def generate_docx_evidence(evidence_folder, evidence_filename, history):
                 _dict_to_evidence(evidence_document, event)
             else:
                 _response_to_evidence(evidence_document, event)
-    evidence_document.save(f"{evidence_folder}/{evidence_filename}")
+    file_path = Path(evidence_folder)
+    evidence_document.save(file_path / evidence_filename)
 
 
 def _file_to_evidence(docx_document: Document, event: tuple, destination_folder: Path):
