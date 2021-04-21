@@ -23,14 +23,16 @@ class EaiBat:
 
     @property
     def url(self) -> str:
+        """The current base url"""
         return self.__url
 
     @url.setter
     def url(self, url: str):
+        """URL contains http, https or ftp scheme and only ASCII letters, digits and - or . or :"""
         if not isinstance(url, str) or not url:
             raise AttributeError("url must be a non-empty string")
         parsed_url = urlparse(url)
-        allowed_characters = set(string.ascii_letters + string.digits + '-.')
+        allowed_characters = set(string.ascii_letters + string.digits + '-.:')
         allowed_scheme = ['http', 'https', 'ftp']
         if not all([parsed_url.scheme, parsed_url.netloc]):
             raise ValueError("Url need a scheme and a net location")
