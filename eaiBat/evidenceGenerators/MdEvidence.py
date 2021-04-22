@@ -14,6 +14,7 @@ log = getLogger(__name__)
 
 
 def generate_md_evidence(evidence_folder, evidence_filename, history):
+    log.info(f"Generate MD evidence for {evidence_filename}")
     with open(f"{evidence_folder}/{evidence_filename}", "w", encoding="utf-8") as evidence:
         evidence.write(f"# {evidence_filename}\n")
         external_file = None
@@ -24,18 +25,21 @@ def generate_md_evidence(evidence_folder, evidence_filename, history):
                     evidence.write(f"{event}\n")
                 elif isinstance(event, tuple):
                     if external_file is None:
-                        external_file = Path(f"{evidence_folder}/"
-                                             f"{evidence_filename.split('.')[0]}_file")
+                        log.debug("First external file")
+                        relative_storage = f"{evidence_filename.split('.')[0]}_file"
+                        external_file = Path(f"{evidence_folder}/{relative_storage}")
+                        log.debug(f"evidence relative storage is '{relative_storage}'"
+                                  f"path relative storage is '{external_file}'")
                         os.mkdir(external_file)
 
-                    _file_to_evidence(evidence, event, external_file)
+                    _file_to_evidence(evidence, event, external_file, relative_storage)
                 elif isinstance(event, dict):
                     _dict_to_evidence(evidence, event)
                 else:
                     _response_to_evidence(evidence, event)
 
 
-def _file_to_evidence(file_stream: TextIO, event: tuple, destination_folder: Path):
+def _file_to_evidence(file_stream: TextIO, event: tuple, destination_folder: Path, relative_storage: str):
     path_from_event = Path(event[0])
     # First check the event file element is pointing to a file
     if not path_from_event.exists() or not path_from_event.is_file():
@@ -46,9 +50,9 @@ def _file_to_evidence(file_stream: TextIO, event: tuple, destination_folder: Pat
     if file_path.exists() and file_path.is_file():
         move(file_path, f"{destination_folder}/{file_path.name}")
         if event[1].casefold() == 'img':
-            file_stream.write(f"![{file_path.name}]({destination_folder}/{file_path.name})\n\n")
+            file_stream.write(f"![{file_path.name}]({relative_storage}/{file_path.name})\n\n")
         else:
-            file_stream.write(f"See [{file_path.name}]({destination_folder}/{file_path.name})\n\n")
+            file_stream.write(f"See [{file_path.name}]({relative_storage}/{file_path.name})\n\n")
     else:
         file_stream.write(f"{event[1]} file is located at {event[0]} (but not found)")
 

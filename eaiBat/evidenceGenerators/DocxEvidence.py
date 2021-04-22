@@ -25,21 +25,26 @@ def generate_docx_evidence(evidence_folder, evidence_filename, history):
                 evidence_document.add_paragraph(event)
             elif isinstance(event, tuple):
                 if external_file is None:
-                    # Create the evidence subfolder
-                    external_file = Path(f"{evidence_folder}/"
-                                         f"{evidence_filename.split('.')[0]}_file")
+                    log.debug("First external file")
+                    relative_storage = f"{evidence_filename.split('.')[0]}_file"
+                    external_file = Path(f"{evidence_folder}/{relative_storage}")
+                    log.debug(f"evidence relative storage is '{relative_storage}'"
+                              f"path relative storage is '{external_file}'")
                     os.mkdir(external_file)
 
-                _file_to_evidence(evidence_document, event, external_file)
+                _file_to_evidence(evidence_document, event, external_file, relative_storage)
             elif isinstance(event, dict):
                 _dict_to_evidence(evidence_document, event)
             else:
                 _response_to_evidence(evidence_document, event)
     file_path = Path(evidence_folder)
-    evidence_document.save(file_path / evidence_filename)
+    save_to = file_path / evidence_filename
+    log.debug(f"Save document to '{save_to.absolute()}'")
+    evidence_document.save(save_to.absolute())
 
 
-def _file_to_evidence(docx_document: Document, event: tuple, destination_folder: Path):
+def _file_to_evidence(docx_document: Document, event: tuple, destination_folder: Path, relative_storage: str):
+    log.debug("Try to include external file into the document")
     path_from_event = Path(event[0])
     # First check the event file element is pointing to a file
     if not path_from_event.exists() or not path_from_event.is_file():
@@ -47,14 +52,19 @@ def _file_to_evidence(docx_document: Document, event: tuple, destination_folder:
     else:
         file_path = path_from_event
 
+    log.debug(f"Selected path is '{file_path}'")
+
     if file_path.exists() and file_path.is_file():
+        log.debug("Move the file")
         move(file_path, f"{destination_folder}/{file_path.name}")
         if event[1].casefold() == "img":
-            docx_document.add_picture(file_path, width=Cm(18))
+            log.debug(f"Try to include '{file_path.absolute()}")
+            docx_document.add_picture(file_path.absolute(), width=Cm(18))
             docx_document.add_page_break()
+            log.debug("Picture included")
         else:
             docx_document.add_paragraph(f"A file has been produced or retrieved within this step."
-                                        f"You could see it there : '{destination_folder}/"
+                                        f"You could see it there : '{relative_storage}/"
                                         f"{file_path.name}'")
     else:
         docx_document.add_paragraph(f"{event[1]} file is located at {event[0]} (but not found)")
