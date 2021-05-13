@@ -15,6 +15,7 @@ freezegun = "*"
 behave = "*"
 requests = "*"
 python-docx = "*"
+radon = "*"
 
 [requires]
 python_version = "3.8"
