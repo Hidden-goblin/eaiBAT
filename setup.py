@@ -41,5 +41,12 @@ setup(
     include_package_data=True,
     # package_dir={'': 'eaiBat'},
     author="Eric Aïvayan",
-    author_email="eric.aivayan@free.fr"
+    author_email="eric.aivayan@free.fr",
+    py_modules=["eaiBat"],
+    package_dir={'eaiBat': 'eaiBat'},
+    package_data={'eaiBat': ['resources/*.txt',
+                             'resources/*.py',
+                             'resources/*.csv',
+                             'resources/*.md']},
+    entry_points={"console_scripts": ["eaiBat=eaiBat.generate_project:main"]}
 )
