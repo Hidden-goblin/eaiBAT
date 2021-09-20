@@ -1,0 +1,3 @@
+[behave.formatters]
+html = behave_html_formatter:HTMLFormatter
+allure = allure_behave.formatter:AllureFormatter
