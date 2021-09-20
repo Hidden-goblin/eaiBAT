@@ -1,21 +1,28 @@
 # -*- Product under GNU GPL v3 -*-
 # -*- Author: E.Aivayan -*-
 import json
+from typing import Tuple, Union
 
 from docx import Document
 from docx.shared import Cm, Pt
 from docx.enum.text import WD_BREAK
+from docx.enum.style import WD_STYLE_TYPE
+from docx.shared import Cm, Inches
 from logging import getLogger
 from pathlib import Path
 from shutil import move
 from xml.dom import minidom
 from requests.models import Response
+from json import dumps
 
 log = getLogger(__name__)
 
 
 def generate_docx_evidence(evidence_folder, evidence_filename, history):
     evidence_document = Document()
+    style = evidence_document.styles.add_style('List Bullet 4', WD_STYLE_TYPE.PARAGRAPH)
+    style.base_style = evidence_document.styles['List Bullet 3']
+    style.paragraph_format.first_line_indent = Inches(0.15)
     evidence_document.add_heading(evidence_filename, 0)
     included_file_folder = Path(evidence_folder) / "included_files"
     Path.mkdir(included_file_folder, exist_ok=True)
@@ -133,8 +140,52 @@ def _dict_to_evidence(docx_document: Document, event: dict, file, storage):
             _response_to_evidence(docx_document, value, sub_level=True)
         elif isinstance(value, tuple):
             _file_to_evidence(docx_document, value, file, storage)
+        elif isinstance(value, list):
+            for item in value:
+                docx_document.add_paragraph(str(item), style="List Bullet 2")
+        elif isinstance(value, dict):
+            _dictionary_to_evidence(docx_document, value)
         else:
-            docx_document.add_paragraph(value)
+            docx_document.add_paragraph(str(value))
+
+
+def _list_to_evidence(docx_document, value, depth):
+    if depth > 3:
+        docx_document.add_paragraph(value, style=f"List Bullet {depth + 1}")
+    else:
+        for element in value:
+            if isinstance(element, (str, int, float, bool)):
+                docx_document.add_paragraph(f": {str(element)}",
+                                            style=f"List Bullet {depth + 1}")
+            elif isinstance(element, dict):
+                _dictionary_to_evidence(docx_document,
+                                        element,
+                                        depth + 1)
+            elif isinstance(element, list):
+                _list_to_evidence(docx_document, element, depth + 1)
+
+
+def _dictionary_to_evidence(docx_document: Document,
+                            dictionary: dict,
+                            depth: int = 1):
+    if depth > 3:
+        paragraph = docx_document.add_paragraph()
+        paragraph.paragraph_format.left_indent = Inches(1.25)
+        paragraph.add_run(dumps(dictionary, indent=1))
+    else:
+        for key, value in dictionary.items():
+            paragraph = docx_document.add_paragraph(f"{key}:",
+                                                    style=f"List Bullet {depth + 1}")
+            if isinstance(value, dict):
+                _dictionary_to_evidence(docx_document, value, depth + 1)
+            elif isinstance(value, (str, int, float, bool)):
+                paragraph.add_run(str(value))
+            elif isinstance(value, list):
+                _list_to_evidence(docx_document,
+                                  value,
+                                  depth + 1)
+            else:
+                paragraph.add_run(value)
 
 
 def _response_to_evidence(docx_document: Document,
