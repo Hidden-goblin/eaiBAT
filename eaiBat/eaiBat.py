@@ -63,14 +63,12 @@ class EaiBat:
             raise AttributeError("Step is either a behave.model.step or a tuple")
         if isinstance(step, tuple) and len(step) != 2:
             raise AttributeError("Step is a length 2 tuple")
-        if isinstance(step, tuple) and not all([isinstance(item, str) or isinstance(item, int)
-                                                for item in step]):
+        if isinstance(step, tuple) and not all(
+            isinstance(item, (str, int)) for item in step
+        ):
             raise AttributeError("Step's tuple contains int or string")
 
-        if isinstance(step, tuple):
-            self.__step = step
-        else:
-            self.__step = (step.keyword, step.name)
+        self.__step = step if isinstance(step, tuple) else (step.keyword, step.name)
 
     @property
     def history(self) -> OrderedDict:
