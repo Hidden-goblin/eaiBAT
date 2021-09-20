@@ -164,3 +164,24 @@ class TestCreateEvidenceDocx:
             f"{os.getcwd()}/tests/resources/test_nested_structure.docx"))
         produced = hash_file(f"{self.my_eai.evidence_location}/TEST1.docx")
         assert expected == produced
+
+        expected = hash_file(os.path.abspath(
+            f"{os.getcwd()}/tests/resources/test_one_file.docx"))
+        produced = hash_file(f"{self.my_eai.evidence_location}/TEST1.docx")
+        assert expected == produced
+
+    @freeze_time("2021-02-08 08:00:00")
+    def test_dictionary_nested(self, tmp_path):
+        self.my_eai.clear_history()
+        self.my_eai.evidence_location = tmp_path
+        self.my_eai.step = ("Given", "please follow")
+        self.my_eai.push_event({"dictionary": {"element1": "test", "element2": {"nested": "one"},
+                                               "list": ["one", "two", ["three", "four"]],
+                                               "element3": {"nested":
+                                                            {"nest":
+                                                             {"renested": "value"}}}}})
+        self.my_eai.create_evidence("TEST1.docx", "word")
+        expected = hash_file(os.path.abspath(
+            f"{os.getcwd()}/tests/resources/test_nested_structure.docx"))
+        produced = hash_file(f"{self.my_eai.evidence_location}/TEST1.docx")
+        assert expected == produced
