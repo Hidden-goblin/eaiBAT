@@ -1,0 +1,15 @@
+[run]
+branch = True
+command_line = -m pytest
+source =
+    helpers
+
+# Uncomment if you need to exclude some file from the test coverage
+# omit =
+#   my_folder
+
+[report]
+fail_under = 95.0
+
+[html]
+directory = coverage_html
