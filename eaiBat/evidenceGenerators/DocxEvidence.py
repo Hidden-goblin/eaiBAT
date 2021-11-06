@@ -10,6 +10,7 @@ from pathlib import Path
 from shutil import move
 from xml.dom import minidom
 from requests.models import Response
+from typing import Tuple
 
 log = getLogger(__name__)
 
@@ -41,7 +42,7 @@ def generate_docx_evidence(evidence_folder, evidence_filename, history):
     evidence_document.save(save_to.absolute())
 
 
-def _define_path(evidence_folder: str, evidence_filename: str) -> tuple[str, Path]:
+def _define_path(evidence_folder: str, evidence_filename: str) -> Tuple[str, Path]:
     log.debug("First external file")
     relative_storage = f"{evidence_filename.split('.')[0]}_file"
     external_file = Path(f"{evidence_folder}/{relative_storage}")
@@ -65,23 +66,26 @@ def _file_to_evidence(docx_document: Document, event: tuple, destination_folder:
         file_path = Path(f"{destination_folder.parent}/{event[0]}")
 
     log.debug(f"Selected path is '{file_path}'")
-
-    if file_path.exists() and file_path.is_file():
-        log.debug(f"Move the file from {file_path} to {destination_folder}/{file_path.name}")
-        move(file_path, f"{destination_folder}/{file_path.name}")
-        if event[1].casefold() == "img":
-            log.debug(f"Try to include '{destination_folder}/{file_path.name}'")
-            new_path = Path(f"{destination_folder}/{file_path.name}")
-            log.debug(f"Add this moved picture '{new_path.absolute()}'")
-            docx_document.add_picture(str(new_path.absolute()), width=Cm(18))
-            docx_document.add_page_break()
-            log.debug("Picture included")
+    try:
+        if file_path.exists() and file_path.is_file():
+            log.debug(f"Move the file from {file_path} to {destination_folder}/{file_path.name}")
+            move(file_path, f"{destination_folder}/{file_path.name}")
+            if event[1].casefold() == "img":
+                log.debug(f"Try to include '{destination_folder}/{file_path.name}'")
+                new_path = Path(f"{destination_folder}/{file_path.name}")
+                log.debug(f"Add this moved picture '{new_path.absolute()}'")
+                docx_document.add_picture(str(new_path.absolute()), width=Cm(18))
+                docx_document.add_page_break()
+                log.debug("Picture included")
+            else:
+                docx_document.add_paragraph(
+                    f"A file has been produced or retrieved within this step."
+                    f"You could see it there : '{relative_storage}/"
+                    f"{file_path.name}'")
         else:
-            docx_document.add_paragraph(
-                f"A file has been produced or retrieved within this step."
-                f"You could see it there : '{relative_storage}/"
-                f"{file_path.name}'")
-    else:
+            docx_document.add_paragraph(f"{event[1]} file is located at {event[0]} (but not found)")
+    except Exception as exception:
+        log.error(exception.args)
         docx_document.add_paragraph(f"{event[1]} file is located at {event[0]} (but not found)")
 
 
