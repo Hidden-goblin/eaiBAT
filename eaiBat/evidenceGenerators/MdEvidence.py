@@ -47,13 +47,17 @@ def _file_to_evidence(file_stream: TextIO, event: tuple, destination_folder: Pat
     else:
         file_path = path_from_event
 
-    if file_path.exists() and file_path.is_file():
-        move(file_path, f"{destination_folder}/{file_path.name}")
-        if event[1].casefold() == 'img':
-            file_stream.write(f"![{file_path.name}]({relative_storage}/{file_path.name})\n\n")
+    try:
+        if file_path.exists() and file_path.is_file():
+            move(file_path, f"{destination_folder}/{file_path.name}")
+            if event[1].casefold() == 'img':
+                file_stream.write(f"![{file_path.name}]({relative_storage}/{file_path.name})\n\n")
+            else:
+                file_stream.write(f"See [{file_path.name}]({relative_storage}/{file_path.name})\n\n")
         else:
-            file_stream.write(f"See [{file_path.name}]({relative_storage}/{file_path.name})\n\n")
-    else:
+            file_stream.write(f"{event[1]} file is located at {event[0]} (but not found)")
+    except Exception as exception:
+        log.error(exception.args)
         file_stream.write(f"{event[1]} file is located at {event[0]} (but not found)")
 
 
