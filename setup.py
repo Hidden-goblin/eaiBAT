@@ -34,7 +34,8 @@ setup(
     install_requires=[
         'behave',
         'requests',
-        'python-docx'
+        'python-docx',
+        'unidecode'
     ],
     python_requires='>=3.7, !=2.*',
     packages=find_packages(),

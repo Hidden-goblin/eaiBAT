@@ -18,24 +18,20 @@ log = getLogger(__name__)
 def generate_docx_evidence(evidence_folder, evidence_filename, history):
     evidence_document = Document()
     evidence_document.add_heading(evidence_filename, 0)
-    external_file = None
+    included_file_folder = Path(evidence_folder) / "included_files"
+    Path.mkdir(included_file_folder, exist_ok=True)
     for step, events in history.items():
         evidence_document.add_heading(f"{step[0]}: {step[1]}", 2)
         for event in events:
             if isinstance(event, str):
                 evidence_document.add_paragraph(event)
             elif isinstance(event, tuple):
-                if external_file is None:
-                    relative_storage, external_file = _define_path(evidence_folder,
-                                                                   evidence_filename)
-                _file_to_evidence(evidence_document, event, external_file, relative_storage)
+                _file_to_evidence(evidence_document, event, included_file_folder, evidence_folder)
             elif isinstance(event, dict):
-                if external_file is None:
-                    relative_storage, external_file = _define_path(evidence_folder,
-                                                                   evidence_filename)
-                _dict_to_evidence(evidence_document, event, external_file, relative_storage)
+                _dict_to_evidence(evidence_document, event, included_file_folder, evidence_folder)
             else:
                 _response_to_evidence(evidence_document, event)
+
     file_path = Path(evidence_folder)
     save_to = file_path / evidence_filename
     log.debug(f"Save document to '{save_to.absolute()}'")
@@ -52,27 +48,27 @@ def _define_path(evidence_folder: str, evidence_filename: str) -> Tuple[str, Pat
     return relative_storage, external_file
 
 
-def _file_to_evidence(docx_document: Document, event: tuple, destination_folder: Path,
-                      relative_storage: str):
+def _file_to_evidence(docx_document: Document, event: tuple, included_files_folder: Path,
+                      evidence_folder: str):
     log.debug("Try to include external file into the document")
     path_from_event = Path(event[0])
-    # First check the event file element is pointing to a file    log.debug(f"Current file path {
-    # path_from_event.absolute()}")
+    # First check the event file element is pointing to a file
     if path_from_event.exists() and path_from_event.is_file():
         log.debug("File found")
         file_path = path_from_event
-    else:
+    else:  # The event file does not exist or is not pointing to a file
         log.debug("File not found")
-        file_path = Path(f"{destination_folder.parent}/{event[0]}")
+        # Try to create a filepath with parent destination folder and filename
+        file_path = Path(evidence_folder) / event[0]
 
     log.debug(f"Selected path is '{file_path}'")
     try:
         if file_path.exists() and file_path.is_file():
-            log.debug(f"Move the file from {file_path} to {destination_folder}/{file_path.name}")
-            move(file_path, f"{destination_folder}/{file_path.name}")
+            log.debug(f"Move the file from {file_path} to {included_files_folder}/{file_path.name}")
+            move(file_path, f"{included_files_folder}/{file_path.name}")
             if event[1].casefold() == "img":
-                log.debug(f"Try to include '{destination_folder}/{file_path.name}'")
-                new_path = Path(f"{destination_folder}/{file_path.name}")
+                log.debug(f"Try to include '{included_files_folder}/{file_path.name}'")
+                new_path = Path(f"{included_files_folder}/{file_path.name}")
                 log.debug(f"Add this moved picture '{new_path.absolute()}'")
                 docx_document.add_picture(str(new_path.absolute()), width=Cm(18))
                 docx_document.add_page_break()
@@ -80,7 +76,7 @@ def _file_to_evidence(docx_document: Document, event: tuple, destination_folder:
             else:
                 docx_document.add_paragraph(
                     f"A file has been produced or retrieved within this step."
-                    f"You could see it there : '{relative_storage}/"
+                    f"You could see it there : '{evidence_folder}/"
                     f"{file_path.name}'")
         else:
             docx_document.add_paragraph(f"{event[1]} file is located at {event[0]} (but not found)")
