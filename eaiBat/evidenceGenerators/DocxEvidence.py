@@ -38,16 +38,6 @@ def generate_docx_evidence(evidence_folder, evidence_filename, history):
     evidence_document.save(save_to.absolute())
 
 
-def _define_path(evidence_folder: str, evidence_filename: str) -> Tuple[str, Path]:
-    log.debug("First external file")
-    relative_storage = f"{evidence_filename.split('.')[0]}_file"
-    external_file = Path(f"{evidence_folder}/{relative_storage}")
-    log.debug(f"evidence relative storage is '{relative_storage}'"
-              f"path relative storage is '{external_file}'")
-    Path.mkdir(external_file, exist_ok=True)
-    return relative_storage, external_file
-
-
 def _file_to_evidence(docx_document: Document, event: tuple, included_files_folder: Path,
                       evidence_folder: str):
     log.debug("Try to include external file into the document")
@@ -59,16 +49,16 @@ def _file_to_evidence(docx_document: Document, event: tuple, included_files_fold
     else:  # The event file does not exist or is not pointing to a file
         log.debug("File not found")
         # Try to create a filepath with parent destination folder and filename
-        file_path = Path(evidence_folder) / event[0]
+        file_path = Path(evidence_folder) / path_from_event.name
 
     log.debug(f"Selected path is '{file_path}'")
     try:
         if file_path.exists() and file_path.is_file():
             log.debug(f"Move the file from {file_path} to {included_files_folder}/{file_path.name}")
-            move(file_path, f"{included_files_folder}/{file_path.name}")
+            move(file_path, included_files_folder / file_path.name)
+            new_path = included_files_folder / file_path.name
             if event[1].casefold() == "img":
-                log.debug(f"Try to include '{included_files_folder}/{file_path.name}'")
-                new_path = Path(f"{included_files_folder}/{file_path.name}")
+                log.debug(f"Try to include '{new_path}'")
                 log.debug(f"Add this moved picture '{new_path.absolute()}'")
                 docx_document.add_picture(str(new_path.absolute()), width=Cm(18))
                 docx_document.add_page_break()
@@ -76,8 +66,7 @@ def _file_to_evidence(docx_document: Document, event: tuple, included_files_fold
             else:
                 docx_document.add_paragraph(
                     f"A file has been produced or retrieved within this step."
-                    f"You could see it there : '{evidence_folder}/"
-                    f"{file_path.name}'")
+                    f"You could see it there : '{new_path}'")
         else:
             docx_document.add_paragraph(f"{event[1]} file is located at {event[0]} (but not found)")
     except Exception as exception:
