@@ -10,7 +10,6 @@ from pathlib import Path
 from shutil import move
 from xml.dom import minidom
 from requests.models import Response
-from typing import Tuple
 
 log = getLogger(__name__)
 
@@ -23,14 +22,24 @@ def generate_docx_evidence(evidence_folder, evidence_filename, history):
     for step, events in history.items():
         evidence_document.add_heading(f"{step[0]}: {step[1]}", 2)
         for event in events:
-            if isinstance(event, str):
-                evidence_document.add_paragraph(event)
-            elif isinstance(event, tuple):
-                _file_to_evidence(evidence_document, event, included_file_folder, evidence_folder)
-            elif isinstance(event, dict):
-                _dict_to_evidence(evidence_document, event, included_file_folder, evidence_folder)
-            else:
-                _response_to_evidence(evidence_document, event)
+            try:
+                if isinstance(event, str):
+                    evidence_document.add_paragraph(event)
+                elif isinstance(event, tuple):
+                    _file_to_evidence(evidence_document,
+                                      event,
+                                      included_file_folder,
+                                      evidence_folder)
+                elif isinstance(event, dict):
+                    _dict_to_evidence(evidence_document,
+                                      event,
+                                      included_file_folder,
+                                      evidence_folder)
+                else:
+                    _response_to_evidence(evidence_document,
+                                          event)
+            except Exception as exception:
+                log.error(exception)
 
     file_path = Path(evidence_folder)
     save_to = file_path / evidence_filename
@@ -95,18 +104,19 @@ def _response_to_evidence(docx_document: Document,
     docx_document.add_heading("VERB", section_number)
     docx_document.add_paragraph(str(event.request.method))
     docx_document.add_heading("Request headers", section_number)
+    docx_document.add_paragraph(json.dumps(dict(event.request.headers), indent=2))
 
     if event.request.body is not None:
         docx_document.add_heading("Body", section_number)
-        docx_document.add_paragraph(event.request.body)
+        docx_document.add_paragraph(json.dumps(json.loads(event.request.body), indent=2))
 
     docx_document.add_heading("Response status code", section_number)
     docx_document.add_paragraph(str(event.status_code))
     docx_document.add_heading("Response headers", section_number)
-    docx_document.add_paragraph(event.headers)
+    docx_document.add_paragraph(json.dumps(dict(event.headers), indent=2))
     docx_document.add_heading("Response content")
     try:
-        response = json.dumps(event.json(), indent="  ")
+        response = json.dumps(event.json(), indent=2)
         docx_document.add_paragraph("Json response")
         docx_document.add_paragraph(response)
         return
