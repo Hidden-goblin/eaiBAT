@@ -1,0 +1,15 @@
+[run]
+branch = True
+command_line = -m pytest
+source =
+    eaiBat
+
+# Uncomment if you need to exclude some file from the test coverage
+omit =
+  tests
+
+[report]
+fail_under = 95.0
+
+[html]
+directory = coverage_html

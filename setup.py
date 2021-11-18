@@ -3,12 +3,12 @@
 # -*- coding: utf-8 -*-
 from setuptools import setup, find_packages
 
-with open("README.md", "r") as file:
+with open("readme.md", "r") as file:
     long_description = file.read()
 
 setup(
     name="eaibat",
-    version="0.0.8",
+    version="0.0.9",
     description="Basic classes to ease BDD evidence creation",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -34,7 +34,8 @@ setup(
     install_requires=[
         'behave',
         'requests',
-        'python-docx'
+        'python-docx',
+        'unidecode'
     ],
     python_requires='>=3.7, !=2.*',
     packages=find_packages(),

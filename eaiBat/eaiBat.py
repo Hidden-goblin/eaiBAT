@@ -1,6 +1,8 @@
 # -*- Product under GNU GPL v3 -*-
 # -*- Author: E.Aivayan -*-
+import re
 import string
+import unidecode
 from collections import OrderedDict
 
 from logging import getLogger
@@ -106,3 +108,21 @@ class EaiBat:
             generate_docx_evidence(self.evidence_location, filename, self.history)
         else:
             log.warning(f"No generator for {evidence_type}")
+
+
+def folder_file_name_cleaning(name: str) -> str:
+    """
+    Clean the name from spaces and some special characters
+    :param name: the name to clean
+    :return: a string
+    """
+    result = unidecode.unidecode(name)
+    result = re.sub(r"\W", "_", result, re.ASCII)
+    result = result.replace(" ", "_")\
+        .replace(",", "_")\
+        .replace("'", "_")\
+        .replace("@", "-")\
+        .replace(".", "_")
+    result = re.sub("[_]{2,20}", "_", result)
+    result = re.sub("[-]{2,20}", "-", result)
+    return result
