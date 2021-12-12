@@ -9,7 +9,7 @@ from pathlib import Path
 from shutil import rmtree, copytree
 from behave.runner import Context
 from behave.model import Scenario, Feature, Step
-from eaiBat import EaiBat
+from eaiBat import EaiBat, folder_file_name_cleaning
 
 from helpers.conversion_utils import string_to_bool, status_to_string
 from helpers.database import test_data
@@ -63,15 +63,6 @@ def set_logger(log_name: str, is_debug: bool = False):
         logging.getLogger("eaiautomatontools").setLevel(logging.WARNING)
         logging.getLogger("helpers").setLevel(logging.WARNING)
         logging.getLogger("builtins").setLevel(logging.WARNING)
-
-
-def folder_file_name_cleaning(name: str) -> str:
-    """
-    Clean the name from spaces and special characters
-    :param name: the name to clean
-    :return: a string
-    """
-    return name.replace(" ", "_").replace(",", "_").replace("'", "_").replace("@", "-")
 
 
 def make_evidence_rotation(max_keep: int):
@@ -210,3 +201,4 @@ def after_all(context: Context):
     # For Web testing #######################################
     # Uncomment next if your method's name for closing a browser is 'close_browser'
     # context.model.close_browser()
+    pass
