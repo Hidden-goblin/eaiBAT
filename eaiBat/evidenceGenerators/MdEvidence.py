@@ -39,7 +39,10 @@ def generate_md_evidence(evidence_folder, evidence_filename, history):
                     _response_to_evidence(evidence, event)
 
 
-def _file_to_evidence(file_stream: TextIO, event: tuple, destination_folder: Path, relative_storage: str):
+def _file_to_evidence(file_stream: TextIO,
+                      event: tuple,
+                      destination_folder: Path,
+                      relative_storage: str):
     path_from_event = Path(event[0])
     # First check the event file element is pointing to a file
     if not path_from_event.exists() or not path_from_event.is_file():
@@ -53,7 +56,8 @@ def _file_to_evidence(file_stream: TextIO, event: tuple, destination_folder: Pat
             if event[1].casefold() == 'img':
                 file_stream.write(f"![{file_path.name}]({relative_storage}/{file_path.name})\n\n")
             else:
-                file_stream.write(f"See [{file_path.name}]({relative_storage}/{file_path.name})\n\n")
+                file_stream.write(
+                    f"See [{file_path.name}]({relative_storage}/{file_path.name})\n\n")
         else:
             file_stream.write(f"{event[1]} file is located at {event[0]} (but not found)")
     except Exception as exception:

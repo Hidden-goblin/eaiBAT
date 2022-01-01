@@ -1,10 +1,10 @@
 # -*- Product under GNU GPL v3 -*-
 # -*- Author: E.Aivayan -*-
-import os
 import json
 
 from docx import Document
-from docx.shared import Cm
+from docx.shared import Cm, Pt
+from docx.enum.text import WD_BREAK
 from logging import getLogger
 from pathlib import Path
 from shutil import move
@@ -47,7 +47,48 @@ def generate_docx_evidence(evidence_folder, evidence_filename, history):
     evidence_document.save(save_to.absolute())
 
 
-def _file_to_evidence(docx_document: Document, event: tuple, included_files_folder: Path,
+def _txt_sql_file(docx_document: Document, new_path: Path):
+    docx_document.add_paragraph(f"Content of '{str(new_path.name)}'")
+    with open(new_path) as file:
+        lines = file.readlines()
+    is_first = True
+    paragraph = []
+    for line in lines:
+        if is_first and not line.strip():
+            pass
+        elif is_first and line.strip():
+            is_first = False
+            paragraph.append(line.strip())
+        elif line.strip():
+            paragraph.append(line.strip())
+        else:
+            doc_paragraph = docx_document.add_paragraph()
+            doc_paragraph_format = doc_paragraph.paragraph_format
+            doc_paragraph_format.left_indent = Cm(1)
+            doc_paragraph_format.right_indent = Cm(1)
+            doc_run = doc_paragraph.add_run()
+            doc_run.font.name = 'Times New Roman'
+            doc_run.font.size = Pt(10)
+            for item in paragraph:
+                doc_run.add_text(item)
+                doc_run.add_break(WD_BREAK.LINE)
+            paragraph = []
+    if paragraph:
+        doc_paragraph = docx_document.add_paragraph()
+        doc_paragraph_format = doc_paragraph.paragraph_format
+        doc_paragraph_format.left_indent = Cm(1)
+        doc_paragraph_format.right_indent = Cm(1)
+        doc_run = doc_paragraph.add_run()
+        doc_run.font.name = 'Times New Roman'
+        doc_run.font.size = Pt(10)
+        for item in paragraph:
+            doc_run.add_text(item)
+            doc_run.add_break(WD_BREAK.LINE)
+
+
+def _file_to_evidence(docx_document: Document,
+                      event: tuple,
+                      included_files_folder: Path,
                       evidence_folder: str):
     log.debug("Try to include external file into the document")
     path_from_event = Path(event[0])
@@ -72,6 +113,8 @@ def _file_to_evidence(docx_document: Document, event: tuple, included_files_fold
                 docx_document.add_picture(str(new_path.absolute()), width=Cm(18))
                 docx_document.add_page_break()
                 log.debug("Picture included")
+            elif event[1].casefold() in ["txt", "sql"]:
+                _txt_sql_file(docx_document, new_path)
             else:
                 docx_document.add_paragraph(
                     f"A file has been produced or retrieved within this step."
