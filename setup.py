@@ -12,7 +12,7 @@ setup(
     description="Basic classes to ease BDD evidence creation",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/Hidden-goblin/eaiBAT.git",
+    url="http://eaibat.readthedocs.io/",
     classifiers=[  # Optional
         # How mature is this project? Common values are
         #   3 - Alpha
