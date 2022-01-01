@@ -31,7 +31,7 @@ One goal is that class may be subclassed so that your automaton fits your needs.
 - clear_history: without argument.
 - create_evidence: takes two arguments
     - `filename`: the evidence filename
-    -  `evidence_type`: either `markdown` or `word`
+    -  `evidence_type`: either `markdown` or `word`. **Please note** `markdown` generator is not as complete as `word` generator.
 
 ## How to use it?
 

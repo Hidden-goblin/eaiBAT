@@ -1,6 +1,5 @@
 # -*- Product under GNU GPL v3 -*-
 # -*- Author: E.Aivayan -*-
-import os
 import json
 
 from docx import Document
