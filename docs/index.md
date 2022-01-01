@@ -1,7 +1,5 @@
 # Eai BAT
 
-latest update to be seen in [documentation](docs/index.md)
-
 ## Quick overview
 
 Basic automation tool is mainly a python class which holds various data.
