@@ -1,8 +1,6 @@
 # -*- Product under GNU GPL v3 -*-
 # -*- Author: E.Aivayan -*-
 import os
-import requests
-import requests_mock
 
 from shutil import copyfile
 from freezegun import freeze_time
