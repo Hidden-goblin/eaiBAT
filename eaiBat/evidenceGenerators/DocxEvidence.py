@@ -157,7 +157,7 @@ def _response_to_evidence(docx_document: Document,
     docx_document.add_paragraph(str(event.status_code))
     docx_document.add_heading("Response headers", section_number)
     docx_document.add_paragraph(json.dumps(dict(event.headers), indent=2))
-    docx_document.add_heading("Response content")
+    docx_document.add_heading("Response content", section_number)
     try:
         response = json.dumps(event.json(), indent=2)
         docx_document.add_paragraph("Json response")
