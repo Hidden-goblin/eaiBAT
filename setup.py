@@ -8,7 +8,7 @@ with open("readme.md", "r") as file:
 
 setup(
     name="eaibat",
-    version="0.0.10",
+    version="0.0.11",
     description="Basic classes to ease BDD evidence creation",
     long_description=long_description,
     long_description_content_type="text/markdown",
