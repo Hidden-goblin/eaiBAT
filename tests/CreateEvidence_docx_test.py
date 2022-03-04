@@ -120,6 +120,10 @@ class TestCreateEvidenceDocx:
         self.my_eai.create_evidence("TEST1.docx", "word")
 
         assert (tmp_path / "included_files" / "a_text.txt").exists(), "The file has not been moved"
+        expected = hash_file(os.path.abspath(
+            f"{os.getcwd()}/tests/resources/test_one_file.docx"))
+        produced = hash_file(f"{self.my_eai.evidence_location}/TEST1.docx")
+        assert expected == produced
 
     @freeze_time("2021-02-08 08:00:00")
     def test_dictionary_multi(self, tmp_path):
@@ -144,10 +148,6 @@ class TestCreateEvidenceDocx:
         produced = hash_file(f"{self.my_eai.evidence_location}/TEST1.docx")
         assert expected == produced
 
-        expected = hash_file(os.path.abspath(
-            f"{os.getcwd()}/tests/resources/test_one_file.docx"))
-        produced = hash_file(f"{self.my_eai.evidence_location}/TEST1.docx")
-        assert expected == produced
 
     @freeze_time("2021-02-08 08:00:00")
     def test_dictionary_nested(self, tmp_path):

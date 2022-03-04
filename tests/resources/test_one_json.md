@@ -5,7 +5,7 @@ https://mock.com/
 ### VERB
 GET
 ### Request headers
-{'User-Agent': 'python-requests/2.26.0', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive'}
+{'User-Agent': 'python-requests/2.27.1', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive'}
 ### Response status code
 200
 ### Response headers
