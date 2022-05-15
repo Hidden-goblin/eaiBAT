@@ -60,9 +60,7 @@ def main():
                         f"-Dbrowser={args.browser}"]
 
     if args.tags:
-        for tags in args.tags:
-            behave_arguments.append("-t {}".format("".join(tags)))
-
+        behave_arguments.extend(f'-t {"".join(tags)}' for tags in args.tags)
     value = behave_main(behave_arguments)
 
     # Result management: return value is 0 if everything is fine
