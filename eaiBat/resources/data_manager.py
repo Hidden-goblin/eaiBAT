@@ -19,4 +19,4 @@ def build_dataset(base_path: str = "resources/pages"):
         return merged_json
     except Exception as exception:
         log.error(exception)
-        raise Exception(exception) from exception
+        raise
