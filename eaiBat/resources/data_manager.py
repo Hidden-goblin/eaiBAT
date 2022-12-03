@@ -1,6 +1,6 @@
 from json import load
 from pathlib import Path
-from dpath.util import merge
+from dpath import merge
 from logging import getLogger
 
 log = getLogger(__name__)

@@ -22,7 +22,7 @@ def response_time_validation(context, max_time):
         log.error(assertion.args)
         context.model.push_event("Response is over the max time.\n "
                                  f"Received in {context.response.elapsed}")
-        raise AssertionError(assertion.args)
+        raise AssertionError(assertion.args) from assertion
 
 
 def status_code_validation(context, status: int):
@@ -44,7 +44,7 @@ def status_code_validation(context, status: int):
                                  f"as expected.\n"
                                  f" Received {context.response.status_code}"
                                  f" expected {status}")
-        raise AssertionError(assertion.args)
+        raise AssertionError(assertion.args) from assertion
 
 
 def string_to_bool(input_string: str) -> bool:

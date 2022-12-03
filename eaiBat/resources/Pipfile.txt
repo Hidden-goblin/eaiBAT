@@ -13,7 +13,7 @@ eaiautomatontools = "*"
 requests = "*"
 behave = "*"
 behave-html-formatter = "*"
-dpath = "*"
+dpath = ">=2.1.0"
 
 [requires]
 python_version = "3.9"
